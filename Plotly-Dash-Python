@@ -1,0 +1,36 @@
+####
+
+import dash
+import dash_core_components as dcc
+import dash_html_components as html
+from dash.dependencies import Input, Output
+import plotly.express as px
+
+# Sample data
+df = px.data.iris()
+
+# Initialize the Dash app
+app = dash.Dash(__name__)
+
+# Define the layout of the app
+app.layout = html.Div([
+dcc.Graph(id='bar-chart'),
+dcc.Dropdown(
+id='dropdown',
+options=[{'label': col, 'value': col} for col in df.columns],
+value='sepal_width'
+)
+])
+
+# Define the callback to update the chart
+@app.callback(
+Output('bar-chart', 'figure'),
+[Input('dropdown', 'value')]
+)
+def update_chart(selected_column):
+fig = px.bar(df, x='species', y=selected_column)
+return fig
+
+# Run the app
+if __name__ == '__main__':
+app.run_server(debug=True)
